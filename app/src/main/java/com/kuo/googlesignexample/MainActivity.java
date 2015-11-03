@@ -75,9 +75,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
     }
 
-    /**
-     * Method to resolve any signin errors
-     * */
     private void resolveSignInError() {
         if (mConnectionResult.hasResolution()) {
             try {
@@ -134,7 +131,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         personGooglePlusProfile = currentPerson.getUrl();
         email = Plus.AccountApi.getAccountName(mGoogleApiClient);
 
-        profile.setText("personName : " + personName + "\n" + "personPhotoUrl : " + personPhotoUrl + "\n" + "personGooglePlusProfile : " + personGooglePlusProfile + "\n" + "email : " + email);
+        personPhotoUrl = personPhotoUrl.substring(0, personPhotoUrl.length() - 2) + PROFILE_PIC_SIZE;
+
+        new DownloadImageTask((ImageView) findViewById(R.id.personPic)).execute(personPhotoUrl);
+
+        profile.setText("personName : " + personName + "\n" + "personGooglePlusProfile : " + personGooglePlusProfile + "\n" + "email : " + email);
 
     }
 
@@ -146,15 +147,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private SignInButton.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            switch (v.getId()) {
-                case R.id.btn_sign_in:
-
-                    if (!mGoogleApiClient.isConnecting()) {
-                        mSignInClicked = true;
-                        resolveSignInError();
-                    }
-
-                    break;
+            if (!mGoogleApiClient.isConnecting()) {
+                mSignInClicked = true;
+                resolveSignInError();
             }
         }
     };
